@@ -4,9 +4,7 @@ import entity.Book;
 import entity.Novel;
 import entity.TextBook;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +23,12 @@ import java.util.List;
  */
 public class FileUtil {
 
-    public static List<Book> loadBooksFromFile(String path) {
+    /*
+    * 作用：从文件中读取图书信息
+    * @param path 文件路径
+    * @return 返回一个 Book 对象的 List
+    * */
+    public static List<Book> BookRead(String path) {
         List<Book> books = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             String line;
@@ -107,5 +110,92 @@ public class FileUtil {
             System.out.println("⚠️ 读取文件失败：" + e.getMessage());
         }
         return books;
+    }
+
+    /*
+    * 作用：将图书信息写入文件
+    * @param path 文件路径
+    * @param books 图书信息
+    * @return 返回一个布尔值，表示是否成功写入文件
+    * */
+    public static boolean BookWrite(String path, List<Book> books) {
+        File file = new File(path);
+
+        if (file.exists()) {
+            file.mkdirs();
+        }
+
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
+            for (Book book : books) {
+                bw.write(formatBookLine(book));
+                bw.newLine();
+            }
+
+            bw.flush();
+            return true;
+
+        } catch (IOException e) {
+            System.out.println("写入文件失败：" + e.getMessage());
+            return false;
+        }
+
+    }
+
+    /*
+    * 作用：格式化book类型数据存入文件
+    * @param b Book类型，图书信息
+    * @return 返回一个字符串类型的图书信息
+    * */
+    private static String formatBookLine(Book b) {
+        //检查变量 b 是否是 TextBook 类型（或其子类型）的实例。
+        //如果检查通过，自动将 b 转换为 TextBook 类型，并赋值给新变量 tb（无需显式强制转换）。
+        if (b instanceof TextBook tb) {
+            // TextBook,id,title,author,price,publishTime,category,minCategory,number,publisher
+
+            //String.join() 是 Java 8 及以上版本提供的一个静态方法，用于将多个字符串（或可转换为字符串的对象）
+            //通过指定的分隔符连接成一个新的字符串。它简化了字符串拼接的操作，避免了手动循环拼接分隔符的繁琐。
+            return String.join(",",
+                    "Textbook",
+                    safe(b.getId()),
+                    safe(b.getName()),
+                    safe(b.getAuthor()),
+                    String.valueOf(b.getPrice()),
+                    safe(b.getPublishTime()),
+                    safe(b.getCategory()),
+                    safe(tb.getNumber()),
+                    safe(tb.getPublisher())
+            );
+
+        } else if (b instanceof Novel nv) {
+            // Novel,id,title,author,price,publishTime,category,minCategory,faction
+            return String.join(",",
+                    "Novel",
+                    safe(b.getId()),
+                    safe(b.getName()),
+                    safe(b.getAuthor()),
+                    String.valueOf(b.getPrice()),
+                    safe(b.getPublishTime()),
+                    safe(b.getCategory()),
+                    safe(nv.getFaction())
+            );
+
+
+        } else {
+            // Book,id,title,author,price,publishTime,category,minCategory
+            return String.join(",",
+                    "Book",
+                    safe(b.getId()),
+                    safe(b.getName()),
+                    safe(b.getAuthor()),
+                    String.valueOf(b.getPrice()),
+                    safe(b.getPublishTime()),
+                    safe(b.getCategory())
+            );
+
+        }
+    }
+
+    private static String safe(String s) {
+        return s == null ? "" : s.replace("\n", " ").replace("\r", " ");
     }
 }

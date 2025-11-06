@@ -7,7 +7,10 @@ import java.util.Map;
 import java.util.Set;
 
 public interface BookService {
+
     //--------1.图书的增删改查--------
+
+    public boolean saveBooks();
 
     //添加图书（存入List集合）
     public boolean addBook(Book book);

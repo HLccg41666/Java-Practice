@@ -36,25 +36,8 @@ import java.util.List;
 public class Main {
     private static final BookService bookService = new BookServiceImpl();
 
-    private static void preloadSampleData() {
-        // 推荐使用相对路径，避免环境依赖
-        String filePath = "D:/Java Project/Practices_Java_25/Practices_Week_ 3/Library-Management/books.txt"; // 假设文件在项目根目录
-        List<Book> list = util.FileUtil.loadBooksFromFile(filePath);
-
-        if (list.isEmpty()) {
-            System.out.println("⚠️ 未读取到文件数据，加载默认样例数据...");
-            // 可选：此处可添加默认数据，防止空库
-            // 例如：bookService.addBook(new Book("B000", "默认书籍", "未知", 0.0, "2024", "其他"));
-        } else {
-            for (Book b : list) {
-                bookService.addBook(b);
-            }
-            System.out.println("✅ 成功从文件导入 " + list.size() + " 本图书。");
-        }
-    }
-
     public static void main(String[] args) {
-        preloadSampleData();
+
         while (true) {
             System.out.println("/************图书管理系统**********/");
             System.out.println("--------------------");

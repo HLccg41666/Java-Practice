@@ -275,7 +275,7 @@ public class BookManagerGUI extends JFrame {
     private static void preloadSampleData() {
         // 推荐使用相对路径，避免环境依赖
         String filePath = "D:/Java Project/Practices_Java_25/Practices_Week_ 3/Library-Management/books.txt"; // 假设文件在项目根目录
-        List<Book> list = util.FileUtil.loadBooksFromFile(filePath);
+        List<Book> list = util.FileUtil.BookRead(filePath);
 
         if (list.isEmpty()) {
             System.out.println("⚠️ 未读取到文件数据，加载默认样例数据...");

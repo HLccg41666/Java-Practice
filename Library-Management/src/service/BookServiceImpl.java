@@ -1,6 +1,8 @@
 package service;
 
 import entity.Book;
+import util.FileUtil;
+
 import java.util.*;
 
 public class BookServiceImpl implements BookService {
@@ -18,6 +20,28 @@ public class BookServiceImpl implements BookService {
 
 
 
+    private  String filePath = "";
+
+    public BookServiceImpl(){
+        this("Library-Management/books.txt");
+    }
+    public BookServiceImpl(String filePath){
+        this.filePath = filePath;
+        List<Book> loaded = FileUtil.BookRead(filePath);
+        if(!loaded.isEmpty()){
+            booksList.addAll(loaded);
+            System.out.println("成功加载" + loaded.size() + "本图书");
+        }else {
+            System.out.println("错误：未加载任何图书");
+        }
+    }
+
+    public boolean saveBooks(){
+        boolean b = FileUtil.BookWrite(filePath, booksList);
+        return b;
+    }
+
+
     //--------1.图书的增删改查--------
 
     //添加图书（存入List集合）
@@ -30,7 +54,8 @@ public class BookServiceImpl implements BookService {
             System.out.println("图书id已存在");
             return false;
         }
-        booksList.add(book);
+        boolean ok = booksList.add(book);
+        if(ok) saveBooks();
         //添加分类
         categoryMap.computeIfAbsent(book.getCategory(), k -> new ArrayList<>()).add(book);
         return true;
@@ -50,7 +75,8 @@ public class BookServiceImpl implements BookService {
             return false;
         }
 
-        booksList.remove(book);
+        boolean ok = booksList.remove(book);
+        if(ok) saveBooks();
 
 
         List<Book> catBook = categoryMap.get(book.getCategory());
@@ -97,6 +123,7 @@ public class BookServiceImpl implements BookService {
                      }
                  }
 
+                 saveBooks();
                  return true;
              }
         }
